@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def train_transforms(config:Config):
     try:
-        logging.info("Creating train transforms")
+        logger.info("Creating train transforms")
         transforms_list: list[Callable[[Any], Any]] = [
             transforms.Resize(config.data.resnet.image_size),
             transforms.CenterCrop(config.data.resnet.centre_crop_size),
@@ -30,7 +30,7 @@ def train_transforms(config:Config):
         transforms_list.append(transforms.Normalize(mean=config.data.resnet.normalization_mean,
                                                     std=config.data.resnet.normalization_std))
 
-        logging.info("Successfully created train transforms")
+        logger.info("Successfully created train transforms")
         return transforms.Compose(transforms_list)
     except Exception as e:
         raise CustomException(e, sys)
@@ -38,7 +38,7 @@ def train_transforms(config:Config):
 
 def val_transforms(config:Config):
     try:
-        logging.info("Creating val transforms")
+        logger.info("Creating val transforms")
         transforms_list = [
             transforms.Resize(config.data.resnet.image_size),
             transforms.CenterCrop(config.data.resnet.centre_crop_size),
@@ -46,7 +46,7 @@ def val_transforms(config:Config):
             transforms.ToTensor(),
             transforms.Normalize(mean=config.data.resnet.normalization_mean, std=config.data.resnet.normalization_std)
         ]
-        logging.info("Successfully created val transforms")
+        logger.info("Successfully created val transforms")
         return transforms.Compose(transforms_list)
     except Exception as e:
         raise CustomException(e, sys)

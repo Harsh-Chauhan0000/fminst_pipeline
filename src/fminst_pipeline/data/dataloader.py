@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, config: Config)-> \
         tuple[DataLoader, DataLoader, DataLoader]:
     try:
-        logging.info("Creating dataloaders")
+        logger.info("Creating dataloaders")
         
         train_loader = DataLoader(
             trainset,
@@ -18,7 +18,7 @@ def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, con
             num_workers=config.data.dataloader.num_workers,
             pin_memory=config.data.dataloader.pin_memory
         )
-        logging.info("Successfully created train dataloader")
+        logger.info("Successfully created train dataloader")
 
         val_loader = DataLoader(
             valset,
@@ -27,7 +27,7 @@ def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, con
             num_workers=config.data.dataloader.num_workers,
             pin_memory=config.data.dataloader.pin_memory
         )
-        logging.info("Successfully created val dataloader")
+        logger.info("Successfully created val dataloader")
 
         test_loader = DataLoader(
             testset,
@@ -36,7 +36,7 @@ def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, con
             num_workers=config.data.dataloader.num_workers,
             pin_memory=config.data.dataloader.pin_memory
         )
-        logging.info("Successfully created test dataloader")
+        logger.info("Successfully created test dataloader")
 
         return train_loader, val_loader, test_loader
     except Exception as e:

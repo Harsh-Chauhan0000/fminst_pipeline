@@ -66,6 +66,7 @@ class DataConfig(BaseModel):
 # Model Config
 
 class ModelConfig(BaseModel):
+    model_backbone: str
     pretrained: bool
     num_classes: int
     dropout: float

@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
 
     try:
-        logging.info("Starting to create datasets")
+        logger.info("Starting to create datasets")
         train_transform = train_transforms(config)
         val_transform = val_transforms(config)
-        logging.info("Created train and val transforms")
+        logger.info("Created train and val transforms")
 
         trainbase = FashionMNIST(
             root=config.data.dataset.root,
@@ -38,7 +38,7 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
             download=config.data.dataset.download,
             transform=val_transform
         )
-        logging.info("Created train, val and test datasets")
+        logger.info("Created train, val and test datasets")
     except Exception as e:
         raise CustomException(e, sys)
     
@@ -46,7 +46,7 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
     val_size = int(dataset_len * config.data.split.validation_size)
     train_size = dataset_len - val_size
 
-    logging.info(f"Dataset split sizes: Train - {train_size}, Val - {val_size}, Test - {len(testset)}")
+    logger.info(f"Dataset split sizes: Train - {train_size}, Val - {val_size}, Test - {len(testset)}")
 
     generator = torch.Generator().manual_seed(config.data.split.random_state)
 
@@ -58,7 +58,7 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
     trainset = Subset(trainbase, train_indices)
     valset = Subset(valbase, val_indices)
 
-    logging.info("Created trainset, valset and testset")
+    logger.info("Created trainset, valset and testset")
 
     return trainset, valset, testset
 
