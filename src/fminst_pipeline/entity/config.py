@@ -1,3 +1,4 @@
+import os
 from pydantic import BaseModel
 from typing import Literal
 
@@ -45,6 +46,7 @@ class DataLoaderConfig(BaseModel):
 
 class DataResnetConfig(BaseModel):
     image_size: int
+    centre_crop_size: int
     image_channel: int
     normalization_mean: list[float]
     normalization_std: list[float]
@@ -111,10 +113,10 @@ class Config(BaseModel):
 def load_config() -> Config:
 
     raw_config = {
-        "base": load_yaml(CONFIG_DIR / "base.yaml"),
-        "data": load_yaml(CONFIG_DIR / "data.yaml"),
-        "model": load_yaml(CONFIG_DIR / "model.yaml"),
-        "train": load_yaml(CONFIG_DIR / "train.yaml"),
+        "base": load_yaml(os.path.join(CONFIG_DIR,"base.yaml")),
+        "data": load_yaml(os.path.join(CONFIG_DIR,"data.yaml")),
+        "model": load_yaml(os.path.join(CONFIG_DIR,"model.yaml")),
+        "train": load_yaml(os.path.join(CONFIG_DIR,"train.yaml")),
     }
 
     return Config(
