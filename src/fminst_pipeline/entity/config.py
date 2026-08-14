@@ -111,10 +111,10 @@ class Config(BaseModel):
 def load_config() -> Config:
 
     raw_config = {
-        "base": load_yaml("base.yaml"),
-        "data": load_yaml("data.yaml"),
-        "model": load_yaml("model.yaml"),
-        "train": load_yaml("train.yaml"),
+        "base": load_yaml(CONFIG_DIR / "base.yaml"),
+        "data": load_yaml(CONFIG_DIR / "data.yaml"),
+        "model": load_yaml(CONFIG_DIR / "model.yaml"),
+        "train": load_yaml(CONFIG_DIR / "train.yaml"),
     }
 
     return Config(
