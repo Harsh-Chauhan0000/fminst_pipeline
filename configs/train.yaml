@@ -1,0 +1,27 @@
+epochs: 20
+
+optimizer:
+  name: adamw
+  learning_rate: 0.001
+  weight_decay: 0.0001
+
+scheduler:
+  enabled: true
+  name: cosine
+  min_lr: 0.000001
+
+loss: cross_entropy
+
+early_stopping:
+  enabled: true
+  patience: 5
+  monitor: val_accuracy
+  mode: max
+
+checkpoint:
+  save_best: true
+  save_last: true
+  monitor: val_accuracy
+  mode: max
+
+baseline_freeze: true

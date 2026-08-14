@@ -1,0 +1,4 @@
+pretrained: true
+num_classes: 10
+dropout: 0.0
+freeze_backbone: true

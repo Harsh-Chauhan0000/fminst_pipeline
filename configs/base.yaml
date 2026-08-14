@@ -1,0 +1,15 @@
+project_description:
+  name: fashion-mnist-pipeline
+  experiment_name: fashion-mnist
+
+seed: 42
+
+device: auto
+
+logging:
+  level: DEBUG
+
+mlflow:
+  enabled: true
+  experiment_name: fashion-mnist
+  tracking_uri: mlruns

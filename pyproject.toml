@@ -1,0 +1,20 @@
+[project]
+name = "fminst-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Harsh-Chauhan0000", email = "harsh.chauhan0000@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.4",
+    "pyyaml>=6.0.3",
+]
+
+[project.scripts]
+fminst-pipeline = "fminst_pipeline:main"
+
+[build-system]
+requires = ["uv_build>=0.12.0,<0.13.0"]
+build-backend = "uv_build"
