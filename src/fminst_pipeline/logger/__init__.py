@@ -36,5 +36,3 @@ def configure_logger() -> logging.Logger:
     # Add the handlers to the logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
-
-configure_logger()
