@@ -10,7 +10,7 @@ from fminst_pipeline.entity.config import Config
 
 logger = logging.getLogger(__name__)
 
-def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
+def create_train_datasets(config:Config)-> tuple[Dataset, Dataset]:
 
     try:
         logger.info("Starting to create datasets")
@@ -32,13 +32,7 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
             transform=val_transform
         )
 
-        testset = FashionMNIST(
-            root=config.data.dataset.root,
-            train=False,
-            download=config.data.dataset.download,
-            transform=val_transform
-        )
-        logger.info("Created train, val and test datasets")
+        logger.info("Created train and val datasets")
     except Exception as e:
         raise CustomException(e, sys)
     
@@ -46,7 +40,7 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
     val_size = int(dataset_len * config.data.split.validation_size)
     train_size = dataset_len - val_size
 
-    logger.info(f"Dataset split sizes: Train - {train_size}, Val - {val_size}, Test - {len(testset)}")
+    logger.info(f"Dataset split sizes: Train - {train_size}, Val - {val_size}")
 
     generator = torch.Generator().manual_seed(config.data.split.random_state)
 
@@ -58,8 +52,24 @@ def create_datasets(config:Config)-> tuple[Dataset, Dataset, Dataset]:
     trainset = Subset(trainbase, train_indices)
     valset = Subset(valbase, val_indices)
 
-    logger.info("Created trainset, valset and testset")
+    logger.info("Created trainset and valset")
 
-    return trainset, valset, testset
+    return trainset, valset
+
+def create_test_dataset(config: Config)-> Dataset:
+    try:
+        logger.info("Starting to create test dataset")
+        val_transform = val_transforms(config)
+        testset = FashionMNIST(
+            root=config.data.dataset.root,
+            train=False,
+            download=config.data.dataset.download,
+            transform=val_transform
+        )
+        logger.info("Created test dataset")
+    except Exception as e:
+        raise CustomException(e, sys)
+
+    return testset
 
     

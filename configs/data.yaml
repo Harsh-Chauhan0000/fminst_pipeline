@@ -20,7 +20,7 @@ augmentation:
   rotation:
     degrees: 10
 
-data_resnet18:
+resnet:
   image_size: 256
   centre_crop_size: 224
   image_channel: 3

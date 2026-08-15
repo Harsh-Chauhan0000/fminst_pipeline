@@ -1,12 +1,12 @@
 import yaml
 import torch
-
 def load_yaml(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
 
 
-def get_device(device_config: str) -> torch.device:
+def get_device(config) -> torch.device:
+    device_config = config.base.device
 
     if device_config == "cuda":
         if not torch.cuda.is_available():
@@ -23,3 +23,8 @@ def get_device(device_config: str) -> torch.device:
         )
 
     raise ValueError(f"Unsupported device: {device_config}")
+
+def setup_seed(config) -> None:
+    seed = config.base.seed
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)

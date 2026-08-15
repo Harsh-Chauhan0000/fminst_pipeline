@@ -36,7 +36,7 @@ class Trainer:
         logger.info(f"Trainer initialized for model: {model.__class__.__name__} on device: {self.device}")
 
 
-    def train_epoch(self)-> Dict[str, float]:
+    def train_epoch(self, epoch:int)-> Dict[str, float]:
         try:
             total = 0
             running_loss = 0.0
@@ -59,8 +59,7 @@ class Trainer:
                 total += target.size(0)
 
                 if batch_idx % self.config.train.epochs == 0:
-                    logger.info(f"Train - Epoch: {self.config.train.epochs}, Batch: {batch_idx}, \
-                        Loss: {running_loss/total:.4f}, Accuracy: {self.metrics.compute():.4f}")
+                    logger.info(f"Train - Epoch: {epoch} | {self.config.train.epochs}, Batch: {batch_idx}, Loss: {running_loss/total:.4f}, Accuracy: {self.metrics.compute():.4f}")
             
             epoch_loss = running_loss / total
             epoch_accuracy = self.metrics.compute()
@@ -75,7 +74,7 @@ class Trainer:
         
 
     @torch.no_grad()
-    def validate_epoch(self)-> Dict[str, float]:
+    def validate_epoch(self, epoch: int)-> Dict[str, float]:
         try:
             self.model.eval()
             total = 0
@@ -93,13 +92,11 @@ class Trainer:
                 total += target.size(0)
 
                 if batch_idx % self.config.train.epochs == 0:
-                    logger.info(f"Val - Epoch: {self.config.train.epochs}, Batch: {batch_idx}, \
-                        Loss: {running_loss/total:.4f}, Accuracy: {self.metrics.compute():.4f}")
+                    logger.info(f"Val - Epoch:{epoch} | {self.config.train.epochs}, Batch: {batch_idx}, Loss: {running_loss/total:.4f}, Accuracy: {self.metrics.compute():.4f}")
             
             epoch_loss = running_loss / total
             epoch_accuracy = self.metrics.compute()
-            logger.info(f"Val - Epoch {self.config.train.epochs} completed. Loss: {epoch_loss:.4f}, \
-                Accuracy: {epoch_accuracy:.4f}")
+            logger.info(f"Val - Epoch {self.config.train.epochs} completed. Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
             
             return {
                 "loss": epoch_loss,
@@ -116,8 +113,8 @@ class Trainer:
             logger.info(f"Starting training for {self.config.train.epochs} epochs")
 
             for epoch in range(1, self.config.train.epochs + 1):
-                train_metrics = self.train_epoch()
-                val_metrics = self.validate_epoch()
+                train_metrics = self.train_epoch(epoch)
+                val_metrics = self.validate_epoch(epoch)
                 metrics = {
                     "train_loss": train_metrics["loss"],
                     "train_accuracy": train_metrics["accuracy"],
@@ -127,9 +124,7 @@ class Trainer:
                 for key, value in metrics.items():
                     history[key].append(value)
                 
-                logger.info(f"Epoch {epoch} | {self.config.train.epochs} completed. Train Loss: {train_metrics['loss']:.4f}, \
-                    Train Accuracy: {train_metrics['accuracy']:.4f}, Val Loss: {val_metrics['loss']:.4f}, \
-                    Val Accuracy: {val_metrics['accuracy']:.4f}")
+                logger.info(f"Epoch {epoch} | {self.config.train.epochs} completed. Train Loss: {train_metrics['loss']:.4f}, Train Accuracy: {train_metrics['accuracy']:.4f}, Val Loss: {val_metrics['loss']:.4f}, Val Accuracy: {val_metrics['accuracy']:.4f}")
                 stop_training = self.callback.on_epoch_end(epoch, self.model, self.optimizer, metrics)
                 if stop_training:
                     logger.info(f"Early stopping triggered at epoch {epoch}")

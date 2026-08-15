@@ -20,7 +20,7 @@ class MLFlowConfig(BaseModel):
     tracking_uri: str
 
 class BaseConfig(BaseModel):
-    project: ProjectDescriptionConfig
+    project_description: ProjectDescriptionConfig
     seed: int
     device: Literal["auto", "cpu", "cuda"]
     logging: LogConfig
@@ -60,8 +60,9 @@ class DataConfig(BaseModel):
     dataset: DatasetConfig
     split: DataSplitConfig
     dataloader: DataLoaderConfig
-    resnet: DataResnetConfig
     augmentation: Augumentation
+    resnet: DataResnetConfig
+    
 
 # Model Config
 

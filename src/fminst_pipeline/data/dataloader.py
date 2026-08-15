@@ -6,8 +6,8 @@ from fminst_pipeline.exception import CustomException
 
 logger = logging.getLogger(__name__)
 
-def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, config: Config)-> \
-        tuple[DataLoader, DataLoader, DataLoader]:
+def create_train_dataloaders(trainset: Dataset, valset: Dataset, config: Config)-> \
+        tuple[DataLoader, DataLoader]:
     try:
         logger.info("Creating dataloaders")
         
@@ -29,6 +29,15 @@ def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, con
         )
         logger.info("Successfully created val dataloader")
 
+        return train_loader, val_loader
+    except Exception as e:
+        raise CustomException(e, sys)
+
+
+def create_test_dataloader(testset: Dataset, config: Config)-> DataLoader:
+    try:
+        logger.info("Creating test dataloader")
+
         test_loader = DataLoader(
             testset,
             batch_size=config.data.dataloader.batch_size,
@@ -38,6 +47,6 @@ def create_dataloaders(trainset: Dataset, valset: Dataset, testset: Dataset, con
         )
         logger.info("Successfully created test dataloader")
 
-        return train_loader, val_loader, test_loader
+        return test_loader
     except Exception as e:
         raise CustomException(e, sys)
