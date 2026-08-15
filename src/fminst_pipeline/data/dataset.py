@@ -56,7 +56,7 @@ def create_train_datasets(config:Config)-> tuple[Dataset, Dataset]:
 
     return trainset, valset
 
-def create_test_dataset(config: Config)-> Dataset:
+def create_test_dataset(config: Config)-> FashionMNIST:
     try:
         logger.info("Starting to create test dataset")
         val_transform = val_transforms(config)

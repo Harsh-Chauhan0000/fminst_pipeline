@@ -37,6 +37,10 @@ class Artifact:
         torch.save(checkpoint, path)
         return path
 
+    def load_checkpoint(self, filename: str) -> Any:
+        path = self.get_checkpoint_path(filename)
+        return torch.load(path)
+
     def get_plot_path(self, filename: str) -> str:
         return os.path.join(self.plots_dir, filename)
 
