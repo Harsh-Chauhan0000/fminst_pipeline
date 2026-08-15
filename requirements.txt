@@ -4,3 +4,4 @@ scikit-learn
 matplotlib
 torch --extra-index-url https://download.pytorch.org/whl/cu130
 torchvision --extra-index-url https://download.pytorch.org/whl/cu130
+mlflow
