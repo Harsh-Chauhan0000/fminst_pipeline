@@ -1,2 +1,4 @@
 pyyaml
 pydantic
+scikit-learn
+matplotlib
