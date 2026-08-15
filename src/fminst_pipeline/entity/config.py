@@ -89,6 +89,7 @@ class EarlyStoppingConfig(BaseModel):
     patience: int
     monitor: str
     mode: str
+    min_delta: float
 
 class CheckpointConfig(BaseModel):
     save_best: bool

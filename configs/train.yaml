@@ -17,7 +17,8 @@ early_stopping:
   patience: 5
   monitor: val_accuracy
   mode: max
-
+  min_delta: 0.01
+  
 checkpoint:
   save_best: true
   save_last: true

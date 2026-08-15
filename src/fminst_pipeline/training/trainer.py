@@ -7,8 +7,11 @@ from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 
 from fminst_pipeline.entity.config import Config
+from fminst_pipeline.entity.artifact import Artifact
 from fminst_pipeline.training.losses import create_loss
+from fminst_pipeline.training.optimizers import create_optimizer
 from fminst_pipeline.training.metrics import AccuracyMetrics
+from fminst_pipeline.training.callbacks import Callback
 from fminst_pipeline.exception import CustomException
 import sys
 
@@ -16,19 +19,18 @@ logger = logging.getLogger(__name__)
 
 class Trainer:
 
-    def __init__(self,model: nn.Module, train_loader: DataLoader, val_loader: DataLoader, \
-        optimizer:Optimizer, loss_fn: nn.Module, metrics:AccuracyMetrics, device:torch.device, \
-        config:Config):
-
+    def __init__(self,model: nn.Module, train_loader: DataLoader, val_loader: DataLoader, 
+                    device:torch.device, config:Config, artifact:Artifact):
+        self.config = config
+        self.artifact = artifact
         self.model = model
         self.train_loader = train_loader
         self.val_loader = val_loader
-        self.optimizer = optimizer
-        self.loss_fn = loss_fn
-        self.metrics = metrics
+        self.optimizer = create_optimizer(self.model, self.config)
+        self.loss_fn = create_loss(self.config)
+        self.metrics = AccuracyMetrics()
         self.device = device
-        self.config = config
-
+        self.callback = Callback(self.config, self.artifact)
         self.model.to(self.device)
         
         logger.info(f"Trainer initialized for model: {model.__class__.__name__} on device: {self.device}")
@@ -62,8 +64,6 @@ class Trainer:
             
             epoch_loss = running_loss / total
             epoch_accuracy = self.metrics.compute()
-            logger.info(f"Train - Epoch {self.config.train.epochs} completed. Loss: {epoch_loss:.4f}, \
-                Accuracy: {epoch_accuracy:.4f}")
             
             return {
                 "loss": epoch_loss,
@@ -110,16 +110,31 @@ class Trainer:
             raise CustomException(f"Validation epoch failed - {str(e)}", sys)
         
 
-    def train(self):
+    def fit(self)-> dict[str, list[float]]:
         try:
-            for epoch in range(self.config.train.epochs):
+            history = {"train_loss": [], "train_accuracy": [], "val_loss": [], "val_accuracy": []}
+            logger.info(f"Starting training for {self.config.train.epochs} epochs")
+
+            for epoch in range(1, self.config.train.epochs + 1):
                 train_metrics = self.train_epoch()
                 val_metrics = self.validate_epoch()
+                metrics = {
+                    "train_loss": train_metrics["loss"],
+                    "train_accuracy": train_metrics["accuracy"],
+                    "val_loss": val_metrics["loss"],
+                    "val_accuracy": val_metrics["accuracy"]
+                }
+                for key, value in metrics.items():
+                    history[key].append(value)
                 
-                logger.info(f"Epoch {epoch} completed. Train Loss: {train_metrics['loss']:.4f}, \
+                logger.info(f"Epoch {epoch} | {self.config.train.epochs} completed. Train Loss: {train_metrics['loss']:.4f}, \
                     Train Accuracy: {train_metrics['accuracy']:.4f}, Val Loss: {val_metrics['loss']:.4f}, \
                     Val Accuracy: {val_metrics['accuracy']:.4f}")
-        
+                stop_training = self.callback.on_epoch_end(epoch, self.model, self.optimizer, metrics)
+                if stop_training:
+                    logger.info(f"Early stopping triggered at epoch {epoch}")
+                    break
+            return history
         except Exception as e:
             raise CustomException(f"Training failed - {str(e)}", sys)
         
