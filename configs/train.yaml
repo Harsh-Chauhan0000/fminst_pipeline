@@ -3,7 +3,7 @@ epochs: 10
 optimizer:
   name: adamw
   learning_rate: 0.001
-  weight_decay: 0.0001
+  weight_decay: 0.00001
 
 scheduler:
   enabled: true

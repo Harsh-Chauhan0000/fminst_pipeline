@@ -96,7 +96,7 @@ class Trainer:
             
             epoch_loss = running_loss / total
             epoch_accuracy = self.metrics.compute()
-            logger.info(f"Val - Epoch {self.config.train.epochs} completed. Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
+            logger.info(f"Val - Epoch {epoch} completed. Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
             
             return {
                 "loss": epoch_loss,

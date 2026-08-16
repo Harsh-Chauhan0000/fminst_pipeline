@@ -114,7 +114,6 @@ class StudyConfig(BaseModel):
 
 class SearchSpaceConfig(BaseModel):
     learning_rate: dict
-    backbone_learning_rate: dict
     weight_decay: dict
     batch_size: dict
     dropout: dict

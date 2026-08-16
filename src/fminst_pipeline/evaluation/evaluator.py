@@ -24,31 +24,34 @@ class Evaluator:
         self.model.to(self.device)
 
     @torch.no_grad()
-    def predict(self) -> tuple[list[int], list[int]]:
+    def predict(self) -> tuple[list[int], list[int], torch.Tensor]:
         try:
             self.model.eval()
             all_labels = []
+            all_logits =[]
             all_predictions = []
 
             for batch_idx, (images, labels) in enumerate(self.dataloader):
                 images = images.to(self.device)
 
-                outputs = self.model(images)
-                _, preds = torch.max(outputs, 1)
+                logits = self.model(images)
+                predictions = torch.argmax(logits, dim = 1)
 
                 all_labels.extend(labels.cpu().numpy())
-                all_predictions.extend(preds.cpu().numpy())
-            
-            return all_labels, all_predictions
+                all_logits.append(logits.cpu())
+                all_predictions.extend(predictions.cpu().numpy())
+            logits_tensor = torch.cat(all_logits, dim = 0)
+            return all_labels, all_predictions, logits_tensor
         except Exception as e:
             logger.error(f"Prediction failed - {str(e)}")
             raise e
     
     def evaluate(self) -> dict[str, Any]:
         try:
-            all_labels, all_predictions = self.predict()
+            all_labels, all_predictions, all_logits = self.predict()
+            labels_tensor = torch.tensor(all_labels, dtype=torch.long)
 
-            loss = self.loss_fn(all_predictions, all_labels).item()
+            loss = self.loss_fn(all_logits, labels_tensor).item()
             accuracy = accuracy_score(all_labels, all_predictions)
             precision = precision_score(all_labels, all_predictions, average='macro', zero_division=0)
             recall = recall_score(all_labels, all_predictions, average='macro', zero_division=0)

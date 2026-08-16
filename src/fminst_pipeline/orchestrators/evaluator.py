@@ -6,6 +6,7 @@ from fminst_pipeline.entity.config import Config, load_config
 from fminst_pipeline.entity.artifact import Artifact
 from fminst_pipeline.data.dataset import create_test_dataset
 from fminst_pipeline.data.dataloader import create_test_dataloader
+from fminst_pipeline.models.model_assembly import create_model
 from fminst_pipeline.evaluation.evaluator import Evaluator
 from fminst_pipeline.evaluation.plots import plot_confusion_matrix
 from fminst_pipeline.logger import configure_logger
@@ -31,7 +32,9 @@ def evaluation_pipeline(config: Config, artifact: Artifact) -> None:
         class_names = list(testset.classes)
 
         logger.info("Loading model with best weights")
-        model = artifact.load_checkpoint("best_model.pt")
+        model = create_model(config)
+        checkpoint = artifact.load_checkpoint("best_model.pth")
+        model.load_state_dict(checkpoint["model"])
 
         logger.info("Initializing evaluator")
         evaluator = Evaluator(model=model, dataloader=test_loader, class_names=class_names, 
