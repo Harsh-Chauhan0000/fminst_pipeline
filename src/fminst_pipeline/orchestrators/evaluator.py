@@ -39,9 +39,19 @@ def evaluation_pipeline(config: Config, artifact: Artifact) -> None:
 
         logger.info("Running evaluation")
         metrics = evaluator.evaluate()
-        logger.info("Evaluation completed")
-        artifact.save_json_report(data=metrics, filename="eval_metrics.json")
-        logger.info("Saved evaluation metrics")
         
+        logger.info(f"Evaluation metrics: {metrics}")
+        plot_confusion_matrix(metrics["confusion_matrix"], class_names, artifact)
+        artifact.save_json_report(data=metrics, filename="eval_metrics.json")
+        logger.info("Evaluation completed")
+        
+    except Exception as e:
+        raise CustomException(e, sys)
+
+if __name__ == "__main__":
+    try:
+        config = load_config()
+        artifact = Artifact(artifact_dir=ARTIFACT_DIR)
+        evaluation_pipeline(config, artifact)
     except Exception as e:
         raise CustomException(e, sys)

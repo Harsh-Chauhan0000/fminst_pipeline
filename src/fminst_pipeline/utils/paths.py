@@ -9,6 +9,8 @@ DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 LOG_DIR = os.path.join(PROJECT_ROOT, "logs",TIMESTAMP)
 ARTIFACT_DIR = os.path.join(PROJECT_ROOT, "artifacts",TIMESTAMP)
 CONFIG_DIR = os.path.join(PROJECT_ROOT, "configs")
+TUNING_DIR = os.path.join(PROJECT_ROOT, "tuning",TIMESTAMP)
 
 os.makedirs(LOG_DIR, exist_ok=True)
 os.makedirs(ARTIFACT_DIR, exist_ok=True)
+os.makedirs(TUNING_DIR, exist_ok=True)

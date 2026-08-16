@@ -107,11 +107,29 @@ class TrainingConfig(BaseModel):
     checkpoint: CheckpointConfig
     baseline_freeze: bool
 
+class StudyConfig(BaseModel):
+    study_name: str
+    direction: str
+    n_trials: int
+
+class SearchSpaceConfig(BaseModel):
+    learning_rate: dict
+    backbone_learning_rate: dict
+    weight_decay: dict
+    batch_size: dict
+    dropout: dict
+    optimizer: dict
+
+class TuningConfig(BaseModel):
+    study: StudyConfig
+    search_space: SearchSpaceConfig
+
 class Config(BaseModel):
     base: BaseConfig
     data: DataConfig
     model: ModelConfig
     train: TrainingConfig
+    tuning: TuningConfig
 
 def load_config() -> Config:
 
@@ -120,11 +138,13 @@ def load_config() -> Config:
         "data": load_yaml(os.path.join(CONFIG_DIR,"data.yaml")),
         "model": load_yaml(os.path.join(CONFIG_DIR,"model.yaml")),
         "train": load_yaml(os.path.join(CONFIG_DIR,"train.yaml")),
+        "tuning": load_yaml(os.path.join(CONFIG_DIR,"tuning.yaml"))
     }
 
     return Config(
         base=raw_config["base"],
         data=raw_config["data"],
         model=raw_config["model"],
-        train=raw_config["train"]
+        train=raw_config["train"],
+        tuning=raw_config["tuning"]
     )

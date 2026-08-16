@@ -1,7 +1,7 @@
 study:
-  name: resnet18-fashion-mnist
+  name: fashion-mnist-2
   direction: maximize
-  n_trials: 30
+  n_trials: 50
 
 search_space:
 

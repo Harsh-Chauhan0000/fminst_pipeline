@@ -13,7 +13,7 @@ from fminst_pipeline.training.trainer import Trainer
 from fminst_pipeline.utils.paths import ARTIFACT_DIR
 from fminst_pipeline.logger import configure_logger
 
-def training_pipeline(config: Config, artifact: Artifact) -> None:
+def training_pipeline(config: Config, artifact: Artifact) -> dict:
     try:
         logger = configure_logger()
         logger.info("=" * 60)
@@ -39,6 +39,7 @@ def training_pipeline(config: Config, artifact: Artifact) -> None:
         logger.info("Training completed")
         artifact.save_json_report(data=history, filename="train_history.json")
         logger.info("Saved train history")
+        return history
     except Exception as e:
         raise CustomException(e, sys)
 
@@ -46,6 +47,6 @@ if __name__ == "__main__":
     try:
         config = load_config()
         artifact = Artifact(artifact_dir=ARTIFACT_DIR)
-        training_pipeline(config, artifact)
+        history = training_pipeline(config, artifact)
     except Exception as e:
         raise CustomException(e, sys)
